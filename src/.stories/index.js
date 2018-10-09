@@ -18,7 +18,7 @@ import random from 'lodash/random';
 import classNames from 'classnames';
 
 function getItems(count, height) {
-  var heights = [65, 110, 140, 65, 90, 65];
+  var heights = [30, 65, 110, 140, 65, 90, 65, 300];
   return range(count).map(value => {
     return {
       value,

@@ -537,19 +537,22 @@ export default function sortableContainer(WrappedComponent, config = {withRef: f
       const prevIndex = this.newIndex;
       this.newIndex = null;
 
+      const translations = []
       for (let i = 0, len = nodes.length; i < len; i++) {
         const {node} = nodes[i];
         const index = node.sortableInfo.index;
+        const width = node.offsetWidth;
         const height = node.offsetHeight;
         const offset = {
-          width: this.width / 2,
-          height: this.height / 2,
+          width: this.width > width ? width / 2 : this.width / 2,
+          height: this.height > height ? height / 2 : this.height / 2,
         };
 
         const translate = {
           x: 0,
           y: 0,
         };
+        translations.push(translate);
         let {edgeOffset} = nodes[i];
 
         // If we haven't cached the node's offsetTop / offsetLeft value
@@ -658,7 +661,7 @@ export default function sortableContainer(WrappedComponent, config = {withRef: f
         } else if (this.axis.y) {
           if (
             index > this.index &&
-            (sortingOffset.top + windowScrollDelta.top) + offset.height >= edgeOffset.top
+            (sortingOffset.top + windowScrollDelta.top) >= edgeOffset.top
           ) {
             translate.y = -(this.height + this.marginOffset.y);
             this.newIndex = index;
@@ -672,7 +675,11 @@ export default function sortableContainer(WrappedComponent, config = {withRef: f
             }
           }
         }
-        node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
+      }
+
+      for (let i = 0, len = nodes.length; i < len; i++) {
+        const translate = translations[i];
+        nodes[i].node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
       }
 
       if (this.newIndex == null) {
